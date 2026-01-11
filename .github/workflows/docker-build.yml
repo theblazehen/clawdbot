@@ -55,3 +55,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            CLAWDBOT_DOCKER_APT_PACKAGES=jq ripgrep fd-find tree htop ncdu tmux fzf vim nano netcat-openbsd dnsutils iputils-ping openssh-client rsync build-essential cmake python3-pip python3-venv sqlite3 pandoc imagemagick ffmpeg zip unzip p7zip-full xz-utils file less bc procps lsof strace man-db socat httpie postgresql-client redis-tools
