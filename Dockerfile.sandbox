@@ -6,7 +6,10 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     bash \
     ca-certificates \
+    chromium \
     curl \
+    fonts-liberation \
+    fonts-noto-color-emoji \
     git \
     jq \
     python3 \
