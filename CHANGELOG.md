@@ -10,7 +10,7 @@ Docs: https://docs.clawd.bot
 - Docs: refresh Android node discovery docs for the Gateway WS service type.
 
 ### Fixes
-- Tests: stabilize Windows gateway/CLI tests by skipping sidecars, normalizing argv, and extending timeouts.
+- Tests: stabilize Windows gateway/CLI tests by skipping sidecars and normalizing argv.
 
 ## 2026.1.19-1
 
