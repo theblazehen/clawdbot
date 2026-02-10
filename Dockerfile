@@ -64,6 +64,9 @@ RUN pnpm ui:build
 
 ENV NODE_ENV=production
 
+# Symlink legacy config path so auto-migration doesn't fail on mount points
+RUN ln -sfn /root/.openclaw /root/.clawdbot
+
 # Security hardening: Run as non-root user
 # The node:22-bookworm image includes a 'node' user (uid 1000)
 # This reduces the attack surface by preventing container escape via root privileges
