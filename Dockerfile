@@ -44,4 +44,7 @@ RUN pnpm ui:build
 
 ENV NODE_ENV=production
 
+# Symlink legacy config path so auto-migration doesn't fail on mount points
+RUN ln -sfn /root/.openclaw /root/.clawdbot
+
 CMD ["node", "openclaw.mjs", "gateway", "--allow-unconfigured"]
