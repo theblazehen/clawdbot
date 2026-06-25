@@ -40,10 +40,10 @@ describe("resolveEffectiveReplyRoute", () => {
     });
   });
 
-  it("does not use persisted fallbacks for normal providers", () => {
+  it("does not use persisted fallbacks for unrelated normal providers", () => {
     expect(
       resolveEffectiveReplyRoute({
-        ctx: ctx({ Provider: "slack" }),
+        ctx: ctx({ Provider: "slack", OriginatingChannel: "slack" }),
         entry: entry({
           deliveryContext: {
             channel: "telegram",
@@ -56,9 +56,30 @@ describe("resolveEffectiveReplyRoute", () => {
         }),
       }),
     ).toEqual({
-      channel: undefined,
+      channel: "slack",
       to: undefined,
       accountId: undefined,
+    });
+  });
+
+  it("fills a partial normal-provider route from the same persisted channel", () => {
+    expect(
+      resolveEffectiveReplyRoute({
+        ctx: ctx({ Provider: "whatsapp", OriginatingChannel: "whatsapp" }),
+        entry: entry({
+          deliveryContext: {
+            channel: "whatsapp",
+            to: "+15550123456",
+            accountId: "default",
+          },
+          chatType: "direct",
+        }),
+      }),
+    ).toEqual({
+      channel: "whatsapp",
+      to: "+15550123456",
+      accountId: "default",
+      chatType: "direct",
     });
   });
 

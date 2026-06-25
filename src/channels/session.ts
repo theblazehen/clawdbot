@@ -57,7 +57,44 @@ export async function recordInboundSession(params: {
   params.trackSessionMetaTask?.(metaTask);
   void metaTask;
 
-  const update = params.updateLastRoute;
+  const update =
+    params.updateLastRoute ??
+    (() => {
+      const channel =
+        typeof ctx.OriginatingChannel === "string" && ctx.OriginatingChannel.trim()
+          ? ctx.OriginatingChannel.trim()
+          : typeof ctx.Provider === "string" && ctx.Provider.trim()
+            ? ctx.Provider.trim()
+            : typeof ctx.Surface === "string" && ctx.Surface.trim()
+              ? ctx.Surface.trim()
+              : "";
+      const to =
+        typeof ctx.OriginatingTo === "string" && ctx.OriginatingTo.trim()
+          ? ctx.OriginatingTo.trim()
+          : typeof ctx.To === "string" && ctx.To.trim()
+            ? ctx.To.trim()
+            : "";
+      if (!channel || !to) {
+        return undefined;
+      }
+      const accountId =
+        typeof ctx.AccountId === "string" && ctx.AccountId.trim()
+          ? ctx.AccountId.trim()
+          : undefined;
+      const threadId =
+        typeof ctx.MessageThreadId === "string" && ctx.MessageThreadId.trim()
+          ? ctx.MessageThreadId.trim()
+          : typeof ctx.MessageThreadId === "number" && Number.isFinite(ctx.MessageThreadId)
+            ? ctx.MessageThreadId
+            : undefined;
+      return {
+        sessionKey: canonicalSessionKey,
+        channel,
+        to,
+        accountId,
+        threadId,
+      };
+    })();
   if (!update) {
     return;
   }

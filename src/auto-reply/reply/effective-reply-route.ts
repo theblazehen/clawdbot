@@ -99,20 +99,28 @@ export function resolveEffectiveReplyRoute(params: {
       inheritedExternalRoute: true,
     };
   }
-  if (!isSystemEventProvider(params.ctx.Provider)) {
-    return {
-      channel: params.ctx.OriginatingChannel,
-      to: params.ctx.OriginatingTo,
-      accountId: params.ctx.AccountId,
-      ...(liveChatType ? { chatType: liveChatType } : {}),
-    };
-  }
   const persistedChannel = persistedDeliveryContext?.channel ?? params.entry?.lastChannel;
   const liveChannel = params.ctx.OriginatingChannel;
   const canInheritPersistedTuple =
     !liveChannel ||
     normalizeMessageChannel(liveChannel) === normalizeMessageChannel(persistedChannel);
   const chatType = liveChatType ?? (canInheritPersistedTuple ? persistedChatType : undefined);
+  if (!isSystemEventProvider(params.ctx.Provider)) {
+    return {
+      channel: liveChannel,
+      to:
+        params.ctx.OriginatingTo ??
+        (canInheritPersistedTuple
+          ? (persistedDeliveryContext?.to ?? params.entry?.lastTo)
+          : undefined),
+      accountId:
+        params.ctx.AccountId ??
+        (canInheritPersistedTuple
+          ? (persistedDeliveryContext?.accountId ?? params.entry?.lastAccountId)
+          : undefined),
+      ...(chatType ? { chatType } : {}),
+    };
+  }
   return {
     channel: liveChannel ?? persistedChannel,
     to:

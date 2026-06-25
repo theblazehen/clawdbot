@@ -143,6 +143,36 @@ describe("recordInboundSession", () => {
     expect(route.ctx).toBe(signalCtx);
   });
 
+  it("persists a fallback delivery route from inbound context", async () => {
+    const inboundCtx: MsgContext = {
+      Provider: "whatsapp",
+      Surface: "whatsapp",
+      AccountId: "default",
+      MessageThreadId: "thread-77",
+      OriginatingChannel: "whatsapp",
+      OriginatingTo: "+15550123456",
+      To: "+15550123456",
+      SessionKey: "agent:main:whatsapp:direct:+15550123456",
+    };
+
+    await recordInboundSession({
+      storePath: "/tmp/openclaw-session-store.json",
+      sessionKey: "agent:main:whatsapp:direct:+15550123456",
+      ctx: inboundCtx,
+      onRecordError: vi.fn(),
+    });
+
+    const route = requireFirstCallArg(updateLastRouteMock);
+    expect(route.sessionKey).toBe("agent:main:whatsapp:direct:+15550123456");
+    expect(route.ctx).toBe(inboundCtx);
+    expect(route.deliveryContext).toEqual({
+      channel: "whatsapp",
+      to: "+15550123456",
+      accountId: "default",
+      threadId: "thread-77",
+    });
+  });
+
   it("skips last-route updates when main DM owner pin mismatches sender", async () => {
     const onSkip = vi.fn();
 
